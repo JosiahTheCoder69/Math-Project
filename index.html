@@ -6,36 +6,49 @@
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f0f0; /* light gray background */
+      margin: 20px; /* add some margin to the body */
     }
+
     #game-container {
       background-color: #fff; /* white background */
       padding: 20px;
       border: 1px solid #ddd; /* light gray border */
       border-radius: 10px; /* rounded corners */
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
+      width: 400px; /* set a fixed width for the game container */
+      margin: 40px auto; /* center the game container horizontally */
     }
+
     #jetski {
       color: #008000; /* green text */
       font-size: 18px;
+      text-align: center; /* center the jetski image */
     }
+
     #problem {
       font-size: 24px;
       font-weight: bold;
       color: #0066cc; /* blue text */
+      margin-bottom: 20px; /* add some space between the problem and the input field */
     }
+
     #score, #lives {
       font-size: 18px;
       font-weight: bold;
       color: #666; /* dark gray text */
+      margin-bottom: 10px; /* add some space between the score/lives and the input field */
     }
+
     input[type="number"] {
-      width: 50px;
+      width: 100px; /* make the input field a bit wider */
       height: 30px;
       font-size: 18px;
       padding: 10px;
       border: 1px solid #ccc; /* light gray border */
       border-radius: 5px; /* rounded corners */
+      margin-bottom: 20px; /* add some space between the input field and the submit button */
     }
+
     button {
       background-color: #4CAF50; /* green button */
       color: #fff; /* white text */
@@ -43,9 +56,27 @@
       border: none;
       border-radius: 5px; /* rounded corners */
       cursor: pointer; /* pointer cursor */
+      margin-bottom: 20px; /* add some space between the submit button and the game container */
     }
+
     button:hover {
       background-color: #3e8e41; /* darker green on hover */
+    }
+
+    /* add some styles for the jetski image */
+    #jetski pre {
+      font-size: 14px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      margin: 0;
+    }
+
+    #jetski pre::before {
+      content: "";
+      display: block;
+      height: 20px;
+      margin-bottom: 10px;
+      background-image: linear-gradient(to bottom, #fff, #f0f0f0);
     }
   </style>
 </head>
@@ -65,18 +96,17 @@
       (   _    _ _\
        |  (/(@)(\
        |  /^\ /^\ |
-       |_(   Y   _)|
-         \_/_/\_/  
+| |  | |  |
       </pre>
     </div>
-    <p id="problem"></p>
-    <input id="user-answer" type="number" placeholder="Enter answer">
-    <button onclick="checkAnswer()">Submit</button>
+    <h2 id="problem"></h2>
+    <input id="answer" type="number">
+    <button onclick="submitAnswer()">Submit</button>
   </div>
   <script>
     let score = 0;
     let lives = 3;
-    let num1, num2, answer;
+    let currentProblem = null;
 
     function startGame() {
       const userInput = document.getElementById("user-input").value.toLowerCase();
@@ -84,36 +114,41 @@
         document.getElementById("game-container").style.display = "block";
         generateProblem();
       } else if (userInput === "no") {
-        alert("Bye Bye");
+        alert("Okay, see you next time!");
       } else {
-        alert("Unknown response, type yes or no.");
+        alert("Please enter yes or no.");
       }
     }
 
     function generateProblem() {
-      num1 = Math.floor(Math.random() * 20) + 1;
-      num2 = Math.floor(Math.random() * 20) + 1;
-      answer = num1 * num2;
-      document.getElementById("problem").innerHTML = `What is ${num1} * ${num2}?`;
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      currentProblem = num1 * num2;
+      document.getElementById("problem").innerText = `What is ${num1} x ${num2}?`;
     }
 
-    function checkAnswer() {
-      const userAnswer = parseInt(document.getElementById("user-answer").value);
-      if (userAnswer === answer) {
+    function submitAnswer() {
+      const userAnswer = document.getElementById("answer").value;
+      if (userAnswer == currentProblem) {
         score++;
-        document.getElementById("score").innerHTML = `Score: ${score}`;
-        alert(`Correct! Your score is now ${score}.`);
+        document.getElementById("score").innerText = `Score: ${score}`;
+        generateProblem();
       } else {
         lives--;
-        document.getElementById("lives").innerHTML = `Lives: ${lives}`;
-        alert(`Sorry, that's not correct. You have ${lives} lives left. Your score is ${score}.`);
+        document.getElementById("lives").innerText = `Lives: ${lives}`;
+        if (lives === 0) {
+          alert("Game over! Your score is " + score);
+          document.getElementById("game-container").style.display = "none";
+          score = 0;
+          lives = 3;
+        } else {
+          document.getElementById("jetski").innerText = "Oops! Try again.";
+          setTimeout(() => {
+            document.getElementById("jetski").innerText = "";
+          }, 1000);
+        }
       }
-      if (lives === 0) {
-        alert(`Game over! Your final score is ${score}.`);
-        document.getElementById("game-container").style.display = "none";
-      } else {
-        generateProblem();
-      }
+      document.getElementById("answer").value = "";
     }
   </script>
 </body>

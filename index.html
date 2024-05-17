@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Jetski Multiply</title>
+  <title>Jetski Multiply Multiplayer</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -81,8 +81,8 @@
   </style>
 </head>
 <body>
-  <h1>Welcome to the mimic of Jetski Multiply!</h1>
-  <p>This game will test your multiplication skills, would you like to play?</p>
+  <h1>Welcome to the mimic of Jetski Multiply Multiplayer!</h1>
+  <p>This game will test your multiplication skills against other players, would you like to play?</p>
   <input id="user-input" type="text" placeholder="yes/no">
   <button onclick="startGame()">Play</button>
   <div id="game-container" style="display: none;">
@@ -98,38 +98,49 @@
        |  /^\ /^\ |
 | |  | |  |
       </pre>
+        <div id="game-container" style="display: none;">
+  <img id="jetski-poster" src="jetski-poster.jpg" alt="Jetski Poster">
+  <!-- ... other elements ... -->
+</div>
     </div>
     <h2 id="problem"></h2>
     <input id="answer" type="number">
     <button onclick="submitAnswer()">Submit</button>
+    <h2 id="opponent-score">Opponent Score: 0</h2>
   </div>
   <script>
     let score = 0;
     let lives = 3;
     let currentProblem = null;
+    let opponentScore = 0;
 
     function startGame() {
       const userInput = document.getElementById("user-input").value.toLowerCase();
       if (userInput === "yes") {
         document.getElementById("game-container").style.display = "block";
         generateProblem();
+        // Initialize opponent score
+        opponentScore = 0;
+        document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
       } else if (userInput === "no") {
-        alert("Okay, see you next time!");
+        alert("Maybe next time!");
       } else {
-        alert("Please enter yes or no.");
+        alert("Invalid input, please try again.");
       }
     }
 
     function generateProblem() {
-      const num1 = Math.floor(Math.random() * 10) + 1;
-      const num2 = Math.floor(Math.random() * 10) + 1;
-      currentProblem = num1 * num2;
-      document.getElementById("problem").innerText = `What is ${num1} x ${num2}?`;
+      const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const randomIndex1 = Math.floor(Math.random() * numbers.length);
+      const randomIndex2 = Math.floor(Math.random() * numbers.length);
+      currentProblem = `${numbers[randomIndex1]} x ${numbers[randomIndex2]}`;
+      document.getElementById("problem").innerText = currentProblem;
     }
 
     function submitAnswer() {
-      const userAnswer = document.getElementById("answer").value;
-      if (userAnswer == currentProblem) {
+      const userAnswer = parseInt(document.getElementById("answer").value);
+      const correctAnswer = parseInt(currentProblem.split("x")[0]) * parseInt(currentProblem.split("x")[1]);
+      if (userAnswer === correctAnswer) {
         score++;
         document.getElementById("score").innerText = `Score: ${score}`;
         generateProblem();
@@ -137,18 +148,25 @@
         lives--;
         document.getElementById("lives").innerText = `Lives: ${lives}`;
         if (lives === 0) {
-          alert("Game over! Your score is " + score);
-          document.getElementById("game-container").style.display = "none";
-          score = 0;
-          lives = 3;
+          gameOver();
         } else {
-          document.getElementById("jetski").innerText = "Oops! Try again.";
-          setTimeout(() => {
-            document.getElementById("jetski").innerText = "";
-          }, 1000);
+          generateProblem();
         }
       }
-      document.getElementById("answer").value = "";
+    }
+
+    function gameOver() {
+      document.getElementById("problem").innerText = "Game Over!";
+      document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
+      const userAnswer = parseInt(document.getElementById("answer").value);
+      const correctAnswer = parseInt(currentProblem.split("x")[0]) * parseInt(currentProblem.split("x")[1]);
+      if (userAnswer === correctAnswer) {
+        document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
+      } else {
+        opponentScore++;
+        document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
+      }
+      alert(`Your score: ${score}, Opponent score: ${opponentScore}`);
     }
   </script>
 </body>

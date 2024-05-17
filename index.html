@@ -121,7 +121,7 @@
     </div>
     <h2 id="problem"></h2>
     <input id="answer" type="number" placeholder="Enter your answer">
-    <button onclick="submitAnswer()">Submit</button>
+    <button id="submit-button" onclick="submitAnswer()">Submit</button>
     <h2 id="opponent-score">Opponent Score: 0</h2>
   </div>
 
@@ -130,6 +130,7 @@
     let lives = 3;
     let currentProblem = null;
     let opponentScore = 0;
+    let gameActive = false;
 
     function startGame() {
       const userInput = document.getElementById("user-input").value.toLowerCase();
@@ -139,6 +140,8 @@
         generateProblem();
         opponentScore = 0;
         document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
+        gameActive = true;
+        startOpponent();
       } else if (userInput === "no") {
         alert("Maybe next time!");
       } else {
@@ -187,20 +190,47 @@
       if (userAnswer === correctAnswer) {
         score++;
         document.getElementById("score").innerText = `Score: ${score}`;
-        generateProblem();
+        if (score >= 10) {
+          declareWinner("You Win!");
+        } else {
+          generateProblem();
+        }
       } else {
         lives--;
         document.getElementById("lives").innerText = `Lives: ${lives}`;
         if (lives === 0) {
-          gameOver();
+          gameOver("You Lose");
         } else {
           generateProblem();
         }
       }
     }
 
-    function gameOver() {
-      document.getElementById("problem").innerText = "Game Over!";
+    function gameOver(message) {
+      document.getElementById("problem").innerText = message;
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("submit-button").style.display = "none";
+      gameActive = false;
+      alert(`Your score: ${score}, Opponent score: ${opponentScore}`);
+    }
+
+    function startOpponent() {
+      const interval = setInterval(() => {
+        if (!gameActive) {
+          clearInterval(interval);
+          return;
+        }
+        opponentScore++;
+        document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
+        if (opponentScore >= 10) {
+          declareWinner("Opponent Wins!");
+        }
+      }, 3000); // Opponent answers every 3 seconds
+    }
+
+    function declareWinner(message) {
+      gameActive = false;
+      document.getElementById("problem").innerText = message;
       document.getElementById("answer").style.display = "none";
       document.getElementById("submit-button").style.display = "none";
       alert(`Your score: ${score}, Opponent score: ${opponentScore}`);

@@ -100,7 +100,7 @@
 <body>
   <div id="intro-container">
     <h1>Welcome to Jetski Multiply Multiplayer!</h1>
-    <p>This game will test your multiplication skills against other players. Would you like to play?</p>
+    <p>This game will test your math skills against other players. Would you like to play?</p>
     <input id="user-input" type="text" placeholder="yes/no">
     <button onclick="startGame()">Play</button>
   </div>
@@ -150,13 +150,40 @@
       const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
       const randomIndex1 = Math.floor(Math.random() * numbers.length);
       const randomIndex2 = Math.floor(Math.random() * numbers.length);
-      currentProblem = `${numbers[randomIndex1]} x ${numbers[randomIndex2]}`;
+      const operations = ["+", "-", "x", "/"];
+      const randomOperation = operations[Math.floor(Math.random() * operations.length)];
+      
+      let problem = `${numbers[randomIndex1]} ${randomOperation} ${numbers[randomIndex2]}`;
+      
+      // Adjust division to ensure integer results
+      if (randomOperation === "/") {
+        problem = `${numbers[randomIndex1] * numbers[randomIndex2]} ${randomOperation} ${numbers[randomIndex2]}`;
+      }
+
+      currentProblem = problem;
       document.getElementById("problem").innerText = currentProblem;
     }
 
+    function calculateAnswer(problem) {
+      const [num1, operator, num2] = problem.split(" ");
+      switch (operator) {
+        case '+':
+          return parseInt(num1) + parseInt(num2);
+        case '-':
+          return parseInt(num1) - parseInt(num2);
+        case 'x':
+          return parseInt(num1) * parseInt(num2);
+        case '/':
+          return parseInt(num1) / parseInt(num2);
+        default:
+          return null;
+      }
+    }
+
     function submitAnswer() {
-      const userAnswer = parseInt(document.getElementById("answer").value);
-      const correctAnswer = parseInt(currentProblem.split("x")[0]) * parseInt(currentProblem.split("x")[1]);
+      const userAnswer = parseFloat(document.getElementById("answer").value);
+      const correctAnswer = calculateAnswer(currentProblem);
+
       if (userAnswer === correctAnswer) {
         score++;
         document.getElementById("score").innerText = `Score: ${score}`;
@@ -174,14 +201,8 @@
 
     function gameOver() {
       document.getElementById("problem").innerText = "Game Over!";
-      const userAnswer = parseInt(document.getElementById("answer").value);
-      const correctAnswer = parseInt(currentProblem.split("x")[0]) * parseInt(currentProblem.split("x")[1]);
-      if (userAnswer === correctAnswer) {
-        document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
-      } else {
-        opponentScore++;
-        document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
-      }
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("submit-button").style.display = "none";
       alert(`Your score: ${score}, Opponent score: ${opponentScore}`);
     }
   </script>

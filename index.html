@@ -5,18 +5,59 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0; /* light gray background */
-      margin: 20px; /* add some margin to the body */
+      background-color: #e0f7fa; /* light cyan background */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
     #game-container {
-      background-color: #fff; /* white background */
+      background-color: #ffffff; /* white background */
       padding: 20px;
       border: 1px solid #ddd; /* light gray border */
       border-radius: 10px; /* rounded corners */
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
       width: 400px; /* set a fixed width for the game container */
-      margin: 40px auto; /* center the game container horizontally */
+      text-align: center;
+    }
+
+    h1 {
+      color: #00796b; /* teal color */
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #004d40; /* dark teal color */
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: calc(100% - 22px); /* make the input field full width with some padding */
+      height: 40px;
+      font-size: 18px;
+      padding: 10px;
+      border: 1px solid #ccc; /* light gray border */
+      border-radius: 5px; /* rounded corners */
+      margin-bottom: 20px; /* add some space between the input field and the submit button */
+    }
+
+    button {
+      background-color: #00796b; /* teal button */
+      color: #fff; /* white text */
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px; /* rounded corners */
+      cursor: pointer; /* pointer cursor */
+      margin-bottom: 20px; /* add some space between the submit button and the game container */
+    }
+
+    button:hover {
+      background-color: #004d40; /* darker teal on hover */
     }
 
     #jetski {
@@ -28,39 +69,15 @@
     #problem {
       font-size: 24px;
       font-weight: bold;
-      color: #0066cc; /* blue text */
+      color: #00796b; /* teal text */
       margin-bottom: 20px; /* add some space between the problem and the input field */
     }
 
-    #score, #lives {
+    #score, #lives, #opponent-score {
       font-size: 18px;
       font-weight: bold;
       color: #666; /* dark gray text */
       margin-bottom: 10px; /* add some space between the score/lives and the input field */
-    }
-
-    input[type="number"] {
-      width: 100px; /* make the input field a bit wider */
-      height: 30px;
-      font-size: 18px;
-      padding: 10px;
-      border: 1px solid #ccc; /* light gray border */
-      border-radius: 5px; /* rounded corners */
-      margin-bottom: 20px; /* add some space between the input field and the submit button */
-    }
-
-    button {
-      background-color: #4CAF50; /* green button */
-      color: #fff; /* white text */
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px; /* rounded corners */
-      cursor: pointer; /* pointer cursor */
-      margin-bottom: 20px; /* add some space between the submit button and the game container */
-    }
-
-    button:hover {
-      background-color: #3e8e41; /* darker green on hover */
     }
 
     /* add some styles for the jetski image */
@@ -81,10 +98,13 @@
   </style>
 </head>
 <body>
-  <h1>Welcome to the mimic of Jetski Multiply Multiplayer!</h1>
-  <p>This game will test your multiplication skills against other players, would you like to play?</p>
-  <input id="user-input" type="text" placeholder="yes/no">
-  <button onclick="startGame()">Play</button>
+  <div id="intro-container">
+    <h1>Welcome to Jetski Multiply Multiplayer!</h1>
+    <p>This game will test your multiplication skills against other players. Would you like to play?</p>
+    <input id="user-input" type="text" placeholder="yes/no">
+    <button onclick="startGame()">Play</button>
+  </div>
+
   <div id="game-container" style="display: none;">
     <h2 id="score">Score: 0</h2>
     <h2 id="lives">Lives: 3</h2>
@@ -98,16 +118,13 @@
        |  /^\ /^\ |
 | |  | |  |
       </pre>
-        <div id="game-container" style="display: none;">
-  <img id="jetski-poster" src="jetski.jpg" alt="Jetski Poster">
-  <!-- ... other elements ... -->
-</div>
     </div>
     <h2 id="problem"></h2>
-    <input id="answer" type="number">
+    <input id="answer" type="number" placeholder="Enter your answer">
     <button onclick="submitAnswer()">Submit</button>
     <h2 id="opponent-score">Opponent Score: 0</h2>
   </div>
+
   <script>
     let score = 0;
     let lives = 3;
@@ -117,9 +134,9 @@
     function startGame() {
       const userInput = document.getElementById("user-input").value.toLowerCase();
       if (userInput === "yes") {
+        document.getElementById("intro-container").style.display = "none";
         document.getElementById("game-container").style.display = "block";
         generateProblem();
-        // Initialize opponent score
         opponentScore = 0;
         document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
       } else if (userInput === "no") {
@@ -157,7 +174,6 @@
 
     function gameOver() {
       document.getElementById("problem").innerText = "Game Over!";
-      document.getElementById("opponent-score").innerText = `Opponent Score: ${opponentScore}`;
       const userAnswer = parseInt(document.getElementById("answer").value);
       const correctAnswer = parseInt(currentProblem.split("x")[0]) * parseInt(currentProblem.split("x")[1]);
       if (userAnswer === correctAnswer) {

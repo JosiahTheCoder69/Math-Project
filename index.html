@@ -1,27 +1,120 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jetski Addition</title>
-    <link rel="stylesheet" href="styles.css">
+  <title>Jetski Multiply</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0; /* light gray background */
+    }
+    #game-container {
+      background-color: #fff; /* white background */
+      padding: 20px;
+      border: 1px solid #ddd; /* light gray border */
+      border-radius: 10px; /* rounded corners */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
+    }
+    #jetski {
+      color: #008000; /* green text */
+      font-size: 18px;
+    }
+    #problem {
+      font-size: 24px;
+      font-weight: bold;
+      color: #0066cc; /* blue text */
+    }
+    #score, #lives {
+      font-size: 18px;
+      font-weight: bold;
+      color: #666; /* dark gray text */
+    }
+    input[type="number"] {
+      width: 50px;
+      height: 30px;
+      font-size: 18px;
+      padding: 10px;
+      border: 1px solid #ccc; /* light gray border */
+      border-radius: 5px; /* rounded corners */
+    }
+    button {
+      background-color: #4CAF50; /* green button */
+      color: #fff; /* white text */
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px; /* rounded corners */
+      cursor: pointer; /* pointer cursor */
+    }
+    button:hover {
+      background-color: #3e8e41; /* darker green on hover */
+    }
+  </style>
 </head>
 <body>
-    <main class="game-container">
-        <h1>Jetski Addition</h1>
-        <section class="jetski-container">
-            <div class="jetski">
-                <span class="number" id="num1">2</span>
-            </div>
-            <span class="operator">+</span>
-            <div class="jetski">
-                <span class="number" id="num2">3</span>
-            </div>
-        </section>
-        <input type="text" class="answer" id="answer" placeholder="Answer">
-        <button class="submit-btn" id="submit-btn">Submit</button>
-        <div id="result"></div>
-    </main>
-    <script src="script.js"></script>
+  <h1>Welcome to the mimic of Jetski Multiply!</h1>
+  <p>This game will test your multiplication skills, would you like to play?</p>
+  <input id="user-input" type="text" placeholder="yes/no">
+  <button onclick="startGame()">Play</button>
+  <div id="game-container" style="display: none;">
+    <h2 id="score">Score: 0</h2>
+    <h2 id="lives">Lives: 3</h2>
+    <div id="jetski">
+      <pre>
+          _____
+         |_____|
+       _/|_|_\`.__
+      (   _    _ _\
+       |  (/(@)(\
+       |  /^\ /^\ |
+       |_(   Y   _)|
+         \_/_/\_/  
+      </pre>
+    </div>
+    <p id="problem"></p>
+    <input id="user-answer" type="number" placeholder="Enter answer">
+    <button onclick="checkAnswer()">Submit</button>
+  </div>
+  <script>
+    let score = 0;
+    let lives = 3;
+    let num1, num2, answer;
+
+    function startGame() {
+      const userInput = document.getElementById("user-input").value.toLowerCase();
+      if (userInput === "yes") {
+        document.getElementById("game-container").style.display = "block";
+        generateProblem();
+      } else if (userInput === "no") {
+        alert("Bye Bye");
+      } else {
+        alert("Unknown response, type yes or no.");
+      }
+    }
+
+    function generateProblem() {
+      num1 = Math.floor(Math.random() * 20) + 1;
+      num2 = Math.floor(Math.random() * 20) + 1;
+      answer = num1 * num2;
+      document.getElementById("problem").innerHTML = `What is ${num1} * ${num2}?`;
+    }
+
+    function checkAnswer() {
+      const userAnswer = parseInt(document.getElementById("user-answer").value);
+      if (userAnswer === answer) {
+        score++;
+        document.getElementById("score").innerHTML = `Score: ${score}`;
+        alert(`Correct! Your score is now ${score}.`);
+      } else {
+        lives--;
+        document.getElementById("lives").innerHTML = `Lives: ${lives}`;
+        alert(`Sorry, that's not correct. You have ${lives} lives left. Your score is ${score}.`);
+      }
+      if (lives === 0) {
+        alert(`Game over! Your final score is ${score}.`);
+        document.getElementById("game-container").style.display = "none";
+      } else {
+        generateProblem();
+      }
+    }
+  </script>
 </body>
 </html>
